@@ -4,7 +4,7 @@ A production-style REST API for managing employees and departments. Built with P
 
 ## Features
 
-- Secure login with Argon2 password hashing and JWT access tokens
+- Secure login with BCrypt password hashing and JWT access tokens
 - Admin-only employee registration, updates, deletion, and department administration
 - Employee profile access and self-service profile updates
 - Department assignment and employee listing with pagination

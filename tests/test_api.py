@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 os.environ["DATABASE_URL"] = "sqlite:///./test_employee_management.db"
+os.environ["INITIAL_ADMIN_PASSWORD"] = "Admin@12345"
 
 from fastapi.testclient import TestClient  # noqa: E402
 from app.database import Base, engine  # noqa: E402
