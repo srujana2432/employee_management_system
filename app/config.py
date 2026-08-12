@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./employee_management.db"
     secret_key: str = "development-only-change-me"
     access_token_expire_minutes: int = 60
+    initial_admin_email: str = "admin@arbrands.com"
+    initial_admin_password: str | None = None
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -15,4 +17,3 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

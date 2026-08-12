@@ -22,14 +22,7 @@ docker compose up -d db
 uvicorn app.main:app --reload
 ```
 
-Open `http://127.0.0.1:8000/docs` for Swagger UI. On first startup the API creates the database tables and a development administrator from the values below:
-
-```text
-email: admin@arbrands.local
-password: Admin@12345
-```
-
-Change this default password before deploying. Run tests with `pytest`.
+Open `http://127.0.0.1:8000/docs` for Swagger UI. Before first startup, set `INITIAL_ADMIN_EMAIL` and a strong `INITIAL_ADMIN_PASSWORD` in your private `.env` file. The application creates that administrator account only if it does not already exist. Run tests with `pytest`.
 
 ## API overview
 
@@ -51,4 +44,3 @@ git add .
 git commit -m "Initial Employee Management API"
 git push -u origin main
 ```
-

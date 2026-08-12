@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import Base, engine, get_db
+from app.config import get_settings
 from app.dependencies import get_current_employee, require_admin
 from app.models import Attendance, AuditLog, Department, Employee, LeaveRequest, LeaveStatus, Payroll, PayrollStatus, UserRole
 from app.schemas import AttendanceOut, AuditLogOut, DepartmentCreate, DepartmentOut, DepartmentUpdate, EmployeeCreate, EmployeeOut, EmployeeUpdate, LeaveRequestCreate, LeaveRequestOut, LeaveRequestReview, LoginRequest, PayrollCreate, PayrollOut, Token
@@ -16,9 +17,12 @@ from app.security import create_access_token, hash_password, verify_password
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     Base.metadata.create_all(bind=engine)
+    settings = get_settings()
     with Session(engine) as db:
-        if not db.scalar(select(Employee).where(Employee.email == "admin@arbrands.com")):
-            db.add(Employee(first_name="System", last_name="Administrator", email="admin@arbrands.com", hashed_password=hash_password("Admin@12345"), role=UserRole.ADMIN, job_title="Administrator"))
+        if not db.scalar(select(Employee).where(Employee.email == settings.initial_admin_email)):
+            if not settings.initial_admin_password:
+                raise RuntimeError("Set INITIAL_ADMIN_PASSWORD in .env before first startup.")
+            db.add(Employee(first_name="System", last_name="Administrator", email=settings.initial_admin_email, hashed_password=hash_password(settings.initial_admin_password), role=UserRole.ADMIN, job_title="Administrator"))
             db.commit()
     yield
 
