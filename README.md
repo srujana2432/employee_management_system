@@ -29,6 +29,7 @@ Open `http://127.0.0.1:8000/docs` for Swagger UI. Before first startup, set `INI
 | Area | Endpoints |
 | --- | --- |
 | Authentication | `POST /api/v1/auth/login` |
+| Password management | `POST /api/v1/auth/change-password` (authenticated user changes own password) |
 | Employees | `GET/POST /api/v1/employees`, `GET/PATCH/DELETE /api/v1/employees/{id}` |
 | My profile | `GET/PATCH /api/v1/employees/me` |
 | Departments | `GET/POST /api/v1/departments`, `PATCH/DELETE /api/v1/departments/{id}` |

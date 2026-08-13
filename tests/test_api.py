@@ -24,6 +24,10 @@ def test_employee_management_flow():
         login = client.post("/api/v1/auth/login", json={"email": "admin@arbrands.com", "password": "Admin@12345"})
         assert login.status_code == 200
         headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
+        assert client.post("/api/v1/auth/change-password", json={"current_password": "Admin@12345", "new_password": "NewAdmin@123"}, headers=headers).status_code == 204
+        login = client.post("/api/v1/auth/login", json={"email": "admin@arbrands.com", "password": "NewAdmin@123"})
+        assert login.status_code == 200
+        headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
         department = client.post("/api/v1/departments", json={"name": "Engineering"}, headers=headers)
         assert department.status_code == 201
         employee = client.post("/api/v1/employees", json={"first_name": "Asha", "last_name": "Patel", "email": "asha@example.com", "password": "Employee@123", "department_id": department.json()["id"]}, headers=headers)

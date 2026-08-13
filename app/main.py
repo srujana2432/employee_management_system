@@ -10,7 +10,7 @@ from app.database import Base, engine, get_db
 from app.config import get_settings
 from app.dependencies import get_current_employee, require_admin
 from app.models import Attendance, AuditLog, Department, Employee, LeaveRequest, LeaveStatus, Payroll, PayrollStatus, UserRole
-from app.schemas import AttendanceOut, AuditLogOut, DepartmentCreate, DepartmentOut, DepartmentUpdate, EmployeeCreate, EmployeeOut, EmployeeUpdate, LeaveRequestCreate, LeaveRequestOut, LeaveRequestReview, LoginRequest, PayrollCreate, PayrollOut, Token
+from app.schemas import AttendanceOut, AuditLogOut, ChangePasswordRequest, DepartmentCreate, DepartmentOut, DepartmentUpdate, EmployeeCreate, EmployeeOut, EmployeeUpdate, LeaveRequestCreate, LeaveRequestOut, LeaveRequestReview, LoginRequest, PayrollCreate, PayrollOut, Token
 from app.security import create_access_token, hash_password, verify_password
 
 
@@ -45,6 +45,15 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     if not employee or not employee.is_active or not verify_password(payload.password, employee.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
     return Token(access_token=create_access_token(str(employee.id)))
+
+
+@app.post("/api/v1/auth/change-password", status_code=status.HTTP_204_NO_CONTENT)
+def change_my_password(payload: ChangePasswordRequest, db: Session = Depends(get_db), current: Employee = Depends(get_current_employee)):
+    if not verify_password(payload.current_password, current.hashed_password):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect")
+    current.hashed_password = hash_password(payload.new_password)
+    log_action(db, current.id, "change_password", "employee", current.id)
+    db.commit()
 
 
 @app.post("/api/v1/departments", response_model=DepartmentOut, status_code=status.HTTP_201_CREATED)

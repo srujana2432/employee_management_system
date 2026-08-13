@@ -67,6 +67,11 @@ class Token(BaseModel):
     token_type: str = "bearer"
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(min_length=8, max_length=128)
+    new_password: str = Field(min_length=8, max_length=128)
+
+
 class AttendanceOut(BaseModel):
     id: int; employee_id: int; attendance_date: date; check_in: datetime; check_out: datetime | None; status: str
     model_config = ConfigDict(from_attributes=True)
